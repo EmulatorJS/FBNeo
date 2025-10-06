@@ -29286,6 +29286,7 @@ struct BurnDriver BurnDrvShinobing = {
 	NeoInit, NeoExit, NeoFrame, NeoRender, NeoScan, &NeoRecalcPalette,
 	0x1000, 320, 224, 4, 3
 };
+
 static struct BurnRomInfo kof2001allRomDesc[] = {
 	{ "kf2k1ps2-p1.bin",            0, 0, 1 | BRF_ESS | BRF_PRG }, //  0 68K code
 	{ "kf2k1ps2-p2.bin",           0x100000, 0x0, 1 | BRF_ESS | BRF_PRG }, //  1

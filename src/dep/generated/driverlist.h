@@ -22903,7 +22903,7 @@ DRV		BurnDrvkof97bl;
 DRV		BurnDrvKovzscs;
 DRV		BurnDrvkovshzs;
 DRV		BurnDrvZzyzzyxx2;
-DRV		BurnDrvkof2001all;
+DRV		BurnDrvKof2001all;
 #undef DRV
 
 // Structure containing addresses of all drivers
@@ -45810,7 +45810,7 @@ static struct BurnDriver* pDriver[] = {
 		&BurnDrvKovzscs,			// kovzscs
 		&BurnDrvkovshzs,			// kovshzs
 	&BurnDrvZzyzzyxx2,			// Zzyzzyxx (set 2)
-  &BurnDrvkof2001all,			// kof2001all
+  &BurnDrvKof2001all,			// kof2001all
 };
 
 // Lookup table containing sourcefiles of all drivers

@@ -27988,7 +27988,7 @@ struct BurnDriver BurnDrvShinobing = {
 
 static struct BurnRomInfo kof2001allRomDesc[] = {
 		{"kf2k1ps2-p1.bin", 0x100000, 0x00000000, 1 | BRF_ESS | BRF_PRG}, //  0 68K code
-		{"kf2k1ps2-p2.bin", 0x400000, 0xf9ac401f, 1 | BRF_ESS | BRF_PRG}, //  1
+		{"kf2k1ps2-p2.bin", 0x400000, 0x00000000, 1 | BRF_ESS | BRF_PRG}, //  1
 		{"262-m1d.bin", 0x020000, 0x00000000, 4 | BRF_ESS | BRF_PRG},			//  2 Z80 code
 		{"kf2k1_c1.rom", 0x800000, 0x00000000, 3 | BRF_GRA},
 		{"kf2k1_c2.rom", 0x800000, 0x00000000, 3 | BRF_GRA},

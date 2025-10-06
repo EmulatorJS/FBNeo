@@ -29304,8 +29304,8 @@ static struct BurnRomInfo kof2001allRomDesc[] = {
 	{ "kf2k1ps2-c10.bin",			0x800000, 0xA9D6ACB8, 3 | BRF_GRA },
 	{ "262-v1-08-e0.bin",       0x400000, 0x83d49ecf, 5 | BRF_SND },     // 11 Sound data
 	{ "262-v2-08-e0.bin",       0x400000, 0x003f1843, 5 | BRF_SND },     // 12
-	{ "262-v3-08-e0.bin",       0x400000, 0x2ae38dbe, 5 | BRF_SND },     // 13
-	{ "262-v4-08-e0.bin",       0x400000, 0x26ec4dd9, 5 | BRF_SND },     // 14
+	{ "262-v3-08-e0.bin",       0x400000, 0x2AE38DBE, 5 | BRF_SND },     // 13
+	{ "262-v4-08-e0.bin",       0x400000, 0x82C31EE5, 5 | BRF_SND },     // 14
 };
 
 STDROMPICKEXT(kof2001all, kof2001all, neogeo)

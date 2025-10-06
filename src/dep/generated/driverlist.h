@@ -22903,6 +22903,7 @@ DRV		BurnDrvkof97bl;
 DRV		BurnDrvKovzscs;
 DRV		BurnDrvkovshzs;
 DRV		BurnDrvZzyzzyxx2;
+DRV		BurnDrvkof2001all;
 #undef DRV
 
 // Structure containing addresses of all drivers
@@ -45809,6 +45810,7 @@ static struct BurnDriver* pDriver[] = {
 		&BurnDrvKovzscs,			// kovzscs
 		&BurnDrvkovshzs,			// kovshzs
 	&BurnDrvZzyzzyxx2,			// Zzyzzyxx (set 2)
+  &BurnDrvkof2001all,			// kof2001all
 };
 
 // Lookup table containing sourcefiles of all drivers
@@ -68505,6 +68507,7 @@ static game_sourcefile_entry sourcefile_table[] = {
 	{ "zzyzzyxx2", "pre90s/d_jack.cpp"},
 	{ "kof2002bl", "neogeo/d_neogeo.cpp"},
 	{ "kof97bl", "neogeo/d_neogeo.cpp"},
+  { "kof2001all", "neogeo/d_neogeo.cpp"},
 	{ "kovzscs", "pgm/d_pgm.cpp"},
   { "kovshzs", "pgm/d_pgm.cpp"},
   { "\0", "\0"}

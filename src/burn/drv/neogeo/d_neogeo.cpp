@@ -29286,4 +29286,37 @@ struct BurnDriver BurnDrvShinobing = {
 	NeoInit, NeoExit, NeoFrame, NeoRender, NeoScan, &NeoRecalcPalette,
 	0x1000, 320, 224, 4, 3
 };
+static struct BurnRomInfo kof2001allRomDesc[] = {
+	{ "kf2k1ps2-p1.bin",            0, 0, 1 | BRF_ESS | BRF_PRG }, //  0 68K code
+	{ "kf2k1ps2-p2.bin",           0x100000, 0x0, 1 | BRF_ESS | BRF_PRG }, //  1
+	{ "262-s1pkz.s1",		0x020000, 0x73efb81d, 2 | BRF_GRA },
+	{"262-m1d.bin",		0x040000, 0x67EB4E2D, 4 | BRF_ESS | BRF_PRG }, //  2 Z80 code
+	{ "kf2k1_c1.rom",			0x800000, 0x103225b1, 3 | BRF_GRA },
+	{ "kf2k1_c2.rom",			0x800000, 0xf9d05d99, 3 | BRF_GRA },
+	{ "kf2k1_c3.rom",			0x800000, 0x4c7ec427, 3 | BRF_GRA },
+	{ "kf2k1_c4.rom",			0x800000, 0x1d237aa6, 3 | BRF_GRA },
+	{ "kf2k1_c5.rom",			0x800000, 0xc2256db5, 3 | BRF_GRA },
+	{ "kf2k1_c6.rom",			0x800000, 0x8d6565a9, 3 | BRF_GRA },
+	{ "kf2k1ps2-c7.bin",			0x800000, 0xB2B503EA, 3 | BRF_GRA },
+	{ "kf2k1ps2-c8.bin",			0x800000, 0x9C89C168, 3 | BRF_GRA },
+	{ "kf2k1ps2-c9.bin",			0x800000, 0xC55FF4F2, 3 | BRF_GRA },
+	{ "kf2k1ps2-c10.bin",			0x800000, 0xA9D6ACB8, 3 | BRF_GRA },
+	{ "262-v1-08-e0.v1",       0x400000, 0x83d49ecf, 5 | BRF_SND },     // 11 Sound data
+	{ "262-v2-08-e0.v2",       0x400000, 0x003f1843, 5 | BRF_SND },     // 12
+	{ "262-v3-08-e0.v3",       0x400000, 0x2ae38dbe, 5 | BRF_SND },     // 13
+	{ "262-v4-08-e0.v4",       0x400000, 0x26ec4dd9, 5 | BRF_SND },     // 14
+};
+
+STDROMPICKEXT(kof2001all, kof2001all, neogeo)
+STD_ROM_FN(kof2001all)
+
+struct BurnDriver BurnDrvKof2001all = {
+	"kof2001all", "kof2001", "neogeo", NULL, "2001",
+	"The King of Fighters 2001 all boss (NGH-2621)\0", NULL, "Eolith / SNK", "Neo Geo AES",
+	NULL, NULL, NULL, NULL,
+	BDF_GAME_WORKING | BDF_CLONE, 2, HARDWARE_PREFIX_CARTRIDGE | HARDWARE_SNK_NEOGEO | HARDWARE_SNK_CMC50 | HARDWARE_SNK_ENCRYPTED_M1, GBF_VSFIGHT, FBF_KOF,
+	NULL, kof2001allRomInfo, kof2001allRomName, NULL, NULL, NULL, NULL, neogeoInputInfo, neogeoDIPInfo,
+	NeoInit, NeoExit, NeoFrame, NeoRender, NeoScan, &NeoRecalcPalette,
+	0x1000, 304, 224, 4, 3
+};
 

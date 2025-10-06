@@ -27987,9 +27987,8 @@ struct BurnDriver BurnDrvShinobing = {
 		0x1000, 320, 224, 4, 3};
 
 static struct BurnRomInfo kof2001allRomDesc[] = {
-		{"kf2k1ps2-p1.bin", 0x100000, 0x0, 1 | BRF_ESS | BRF_PRG}, //  0 68K code
-		{"kf2k1ps2-p2.bin", 0x400000, 0x0, 1 | BRF_ESS | BRF_PRG}, //  1
-		{"262-s1pkz.s1", 0x020000, 0x73efb81d, 2 | BRF_GRA},
+		{"kf2k1ps2-p1.bin", 0x200000, 0x5fde95cf, 1 | BRF_ESS | BRF_PRG}, //  0 68K code
+		{"kf2k1ps2-p2.bin", 0x400000, 0xdb6c66eb, 1 | BRF_ESS | BRF_PRG}, //  1
 		{"262-m1d.bin", 0x040000, 0x67EB4E2D, 4 | BRF_ESS | BRF_PRG}, //  2 Z80 code
 		{"kf2k1_c1.rom", 0x800000, 0x103225b1, 3 | BRF_GRA},
 		{"kf2k1_c2.rom", 0x800000, 0xf9d05d99, 3 | BRF_GRA},
@@ -28005,6 +28004,7 @@ static struct BurnRomInfo kof2001allRomDesc[] = {
 		{"262-v2-08-e0.bin", 0x400000, 0x003f1843, 5 | BRF_SND}, // 12
 		{"262-v3-08-e0.bin", 0x400000, 0x2AE38DBE, 5 | BRF_SND}, // 13
 		{"262-v4-08-e0.bin", 0x400000, 0x82C31EE5, 5 | BRF_SND}, // 14
+		{"kf2k1ps2-s1.bin", 0x020000, 0x73efb81d, 2 | BRF_GRA},
 };
 
 STDROMPICKEXT(kof2001all, kof2001all, neogeo)

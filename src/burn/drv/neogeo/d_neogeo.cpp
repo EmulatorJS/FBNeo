@@ -29312,12 +29312,11 @@ STDROMPICKEXT(kof2001all, kof2001all, neogeo)
 STD_ROM_FN(kof2001all)
 
 struct BurnDriver BurnDrvKof2001all = {
-	"kof2001all", "kof2001all", "neogeo", NULL, "2001",
-	"The King of Fighters 2001 all boss\0", NULL, "Eolith / SNK", "Neo Geo AES",
+	"kof2001all", "kof2001all", "neogeo", NULL, "2004",
+	"The King of Fighters 2001 all boos\0", NULL, "hack", "Neo Geo MVS",
 	NULL, NULL, NULL, NULL,
-	BDF_GAME_WORKING | BDF_CLONE, 2, HARDWARE_PREFIX_CARTRIDGE | HARDWARE_SNK_NEOGEO | HARDWARE_SNK_CMC50 | HARDWARE_SNK_ENCRYPTED_M1, GBF_VSFIGHT, FBF_KOF,
+	BDF_GAME_WORKING | BDF_CLONE | BDF_HACK, 2, HARDWARE_PREFIX_CARTRIDGE | HARDWARE_SNK_NEOGEO, GBF_VSFIGHT, FBF_KOF,
 	NULL, kof2001allRomInfo, kof2001allRomName, NULL, NULL, NULL, NULL, neogeoInputInfo, neogeoDIPInfo,
 	NeoInit, NeoExit, NeoFrame, NeoRender, NeoScan, &NeoRecalcPalette,
 	0x1000, 304, 224, 4, 3
 };
-

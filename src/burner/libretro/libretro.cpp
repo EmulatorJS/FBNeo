@@ -27,6 +27,7 @@
 #define STAT_CRC     2
 #define STAT_SMALL   3
 #define STAT_LARGE   4
+#define STAT_SKIP    5
 
 #ifdef SUBSET
 #undef APP_TITLE
@@ -707,36 +708,44 @@ static int create_variables_from_cheats()
 	CheatInfo* pCurrentCheat = pCheatInfo;
 	int num = 0;
 
+	std::string heading_name;
+
 	while (pCurrentCheat) {
-		// Ignore "empty" cheats, they seem common in cheat bundles (as separators and/or hints ?)
-		int count = 0;
-		for (int i = 0; i < CHEAT_MAX_OPTIONS; i++) {
-			if(pCurrentCheat->pOption[i] == NULL || pCurrentCheat->pOption[i]->szOptionName[0] == '\0') break;
-			count++;
-		}
-		if (count > 0 && count < RETRO_NUM_CORE_OPTION_VALUES_MAX)
-		{
-			cheat_core_options.push_back(cheat_core_option());
-			cheat_core_option *cheat_option = &cheat_core_options.back();
-			std::string option_name = nl_remover(pCurrentCheat->szCheatName);
-			cheat_option->friendly_name = SSTR( "[Cheat] " << option_name.c_str() );
-			cheat_option->friendly_name_categorized = option_name.c_str();
-			std::replace( option_name.begin(), option_name.end(), ' ', '_');
-			std::replace( option_name.begin(), option_name.end(), '=', '_');
-			std::replace( option_name.begin(), option_name.end(), ':', '_');
-			std::replace( option_name.begin(), option_name.end(), '#', '_');
-			cheat_option->option_name = SSTR( "fbneo-cheat-" << num << "-" << drvname << "-" << option_name.c_str() );
-			cheat_option->num = num;
-			cheat_option->values.reserve(count);
-			cheat_option->values.assign(count, cheat_core_option_value());
-			for (int i = 0; i < count; i++) {
-				cheat_core_option_value *cheat_value = &cheat_option->values[i];
-				cheat_value->nValue = i;
-				// prepending name with value, some cheats from official pack have 2 values matching default's name,
-				// and picking the wrong one prevents some games to boot
-				std::string option_value_name = nl_remover(pCurrentCheat->pOption[i]->szOptionName);
-				cheat_value->friendly_name = SSTR( i << " - " << option_value_name.c_str());
-				if (pCurrentCheat->nDefault == i) cheat_option->default_value = SSTR( i << " - " << option_value_name.c_str());
+		if (pCurrentCheat->pOption[0] == NULL && (pCurrentCheat->szCheatName[0] != '\0' && pCurrentCheat->szCheatName[0] != ' ')) {
+			// This is a heading line, we'll use it later
+			heading_name = nl_remover(pCurrentCheat->szCheatName);
+		} else {
+			// Ignore "empty" cheats, they seem common in cheat bundles (as separators and/or hints ?)
+			int count = 0;
+			for (int i = 0; i < CHEAT_MAX_OPTIONS; i++) {
+				if (pCurrentCheat->pOption[i] == NULL || pCurrentCheat->pOption[i]->szOptionName[0] == '\0') break;
+				count++;
+			}
+			if (count > 0 && count < RETRO_NUM_CORE_OPTION_VALUES_MAX)
+			{
+				cheat_core_options.push_back(cheat_core_option());
+				cheat_core_option *cheat_option = &cheat_core_options.back();
+				std::string option_name = nl_remover(pCurrentCheat->szCheatName);
+				std::string option_filename = nl_remover(pCurrentCheat->szCheatFilename);
+				cheat_option->friendly_name = SSTR( "[Cheat][" << option_filename.c_str() << "] " << heading_name.c_str() << option_name.c_str() );
+				cheat_option->friendly_name_categorized = SSTR( "[" << option_filename.c_str() << "] " << heading_name.c_str() << option_name.c_str() );
+				std::replace( option_name.begin(), option_name.end(), ' ', '_');
+				std::replace( option_name.begin(), option_name.end(), '=', '_');
+				std::replace( option_name.begin(), option_name.end(), ':', '_');
+				std::replace( option_name.begin(), option_name.end(), '#', '_');
+				cheat_option->option_name = SSTR( "fbneo-cheat-" << num << "-" << drvname << "-" << option_name.c_str() );
+				cheat_option->num = num;
+				cheat_option->values.reserve(count);
+				cheat_option->values.assign(count, cheat_core_option_value());
+				for (int i = 0; i < count; i++) {
+					cheat_core_option_value *cheat_value = &cheat_option->values[i];
+					cheat_value->nValue = i;
+					// prepending name with value, some cheats from official pack have 2 values matching default's name,
+					// and picking the wrong one prevents some games to boot
+					std::string option_value_name = nl_remover(pCurrentCheat->pOption[i]->szOptionName);
+					cheat_value->friendly_name = SSTR( i << " - " << option_value_name.c_str());
+					if (pCurrentCheat->nDefault == i) cheat_option->default_value = SSTR( i << " - " << option_value_name.c_str());
+				}
 			}
 		}
 		num++;
@@ -800,6 +809,11 @@ void Reinitialise(void)
 	retro_get_system_av_info(&av_info);
 	environ_cb(nNextGeometryCall, &av_info);
 	nNextGeometryCall = RETRO_ENVIRONMENT_SET_GEOMETRY;
+}
+
+void ReinitialiseVideo()
+{
+	Reinitialise();
 }
 
 static void ForceFrameStep()
@@ -889,19 +903,20 @@ static int archive_load_rom(uint8_t *dest, int *wrote, int i)
 
 	int archive = pRomFind[i].nZip;
 
+	// We want to return an error code even if the rom is not needed, that's what standalone does
+	if (pRomFind[i].nState != STAT_OK)
+		return 1;
+
 	if (ZipOpen((char*)g_find_list_path[archive].path.c_str()) != 0)
 		return 1;
 
 	BurnRomInfo ri = {0};
 	BurnDrvGetRomInfo(&ri, i);
 
-	if (!(ri.nType & BRF_NODUMP))
+	if (ZipLoadFile(dest, ri.nLen, wrote, pRomFind[i].nPos) != 0)
 	{
-		if (ZipLoadFile(dest, ri.nLen, wrote, pRomFind[i].nPos) != 0)
-		{
-			ZipClose();
-			return 1;
-		}
+		ZipClose();
+		return 1;
 	}
 
 	ZipClose();
@@ -1118,16 +1133,18 @@ static bool open_archive()
 				// Try to map the ROMs FBNeo wants to ROMs we find inside our pretty archives ...
 				for (unsigned i = 0; i < nRomCount; i++)
 				{
-					if (pRomFind[i].nState == STAT_OK)
+					// Don't bother with roms that have already been found or are never needed
+					if (pRomFind[i].nState == STAT_OK || pRomFind[i].nState == STAT_SKIP)
 						continue;
 
 					struct BurnRomInfo ri;
 					memset(&ri, 0, sizeof(ri));
 					BurnDrvGetRomInfo(&ri, i);
 
+					// If a rom is never needed, let's flag it as skippable
 					if ((ri.nType & BRF_NODUMP) || (ri.nType == 0) || (ri.nLen == 0) || ((NULL == pDataRomDesc) && (0 == ri.nCrc)))
 					{
-						pRomFind[i].nState = STAT_OK;
+						pRomFind[i].nState = STAT_SKIP;
 						continue;
 					}
 
@@ -1191,7 +1208,8 @@ static bool open_archive()
 		bool ret = true;
 		for (unsigned i = 0; i < nRomCount; i++)
 		{
-			if (pRomFind[i].nState != STAT_OK)
+			// Neither the available roms nor the unneeded ones should trigger an error here
+			if (pRomFind[i].nState != STAT_OK && pRomFind[i].nState != STAT_SKIP)
 			{
 				struct BurnRomInfo ri;
 				memset(&ri, 0, sizeof(ri));

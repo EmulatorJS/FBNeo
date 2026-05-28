@@ -1757,8 +1757,11 @@ static INT32 GameInpSpecialOne(struct GameInp* pgi, INT32 nPlayer, char* szb, ch
 	}
 
 	// Hot Rod
+	// Road Blasters
 	if ((parentrom && strcmp(parentrom, "hotrod") == 0) ||
-		(drvname && strcmp(drvname, "hotrod") == 0)
+		(drvname && strcmp(drvname, "hotrod") == 0) ||
+		(parentrom && strcmp(parentrom, "roadblst") == 0) ||
+		(drvname && strcmp(drvname, "roadblst") == 0)
 	) {
 		if (strcmp("Accelerator", description) == 0) {
 			GameInpAnalog2RetroInpAnalog(pgi, nPlayer, RETRO_DEVICE_ID_JOYPAD_R2, RETRO_DEVICE_INDEX_ANALOG_BUTTON, description);
@@ -2772,6 +2775,13 @@ static INT32 GameInpOtherOne(struct GameInp* pgi, char* szi, char *szn)
 		}
 	}
 
+	// Sega Y-Board require this to navigate in service menu
+	if ((nHardwareCode & HARDWARE_PUBLIC_MASK) == HARDWARE_SEGA_SYSTEMY) {
+		if (strcmp("Service", szn) == 0) {
+			GameInpDigital2RetroInpKey(pgi, 0, RETRO_DEVICE_ID_JOYPAD_R3, szn);
+		}
+	}
+
 	// Some cv1k games require this for special mode
 	if ((nHardwareCode & HARDWARE_PUBLIC_MASK) == HARDWARE_CAVE_CV1000) {
 		if (strcmp("Service", szn) == 0) {
@@ -3419,6 +3429,15 @@ void InputMake(void)
 					const INT32 nDeadZone = 200 * nAnalogSpeed / 256;
 
 					nJoy = AnalogDeadZone(nJoy, nDeadZone);
+
+					// dinkNOTE: at 0x100 analog speed, it returns +-824,
+					// but some axis return +-820.
+
+					const INT32 scale_to = (32767 * nAnalogSpeed) >> 13;
+					const INT32 scale_from = scale_to - nDeadZone;
+
+					// note: negative numbers are 1 more than their positive counterpart
+					nJoy = scalerangei(nJoy, -(scale_from + 1), scale_from, -(scale_to + 1), scale_to);
 
 					// Clip axis to 8 bits
 					if (nJoy < -32768) {

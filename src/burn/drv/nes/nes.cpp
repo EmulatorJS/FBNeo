@@ -500,8 +500,10 @@ static INT32 cartridge_load(UINT8* ROMData, UINT32 ROMSize, UINT32 ROMCRC)
 	NESMode |= (ROMCRC == 0xb90a1ca1) ? NO_WORKRAM : 0; // Low G Man
 	NESMode |= (ROMCRC == 0xa905cc12) ? NO_WORKRAM : 0; // Bill & Ted
 	NESMode |= (ROMCRC == 0x45b1869a) ? APU_HACKERY : 0; // rgbleek
-	NESMode |= (ROMCRC == 0xa94b4cbb) ? APU_HACKERY : 0; // famidash
-	NESMode |= (ROMCRC == 0x6a90da54) ? APU_HACKERY : 0; // famidashb
+	NESMode |= (ROMCRC == 0x5bf705b3) ? APU_HACKERY : 0; // famidash
+	NESMode |= (ROMCRC == 0x9baf3585) ? APU_HACKERY : 0; // famidashb
+	NESMode |= (ROMCRC == 0x7556930c) ? APU_HACKERY : 0; // famidashc
+	NESMode |= (ROMCRC == 0x9fc1c56f) ? APU_HACKERY : 0; // famidashd
 	NESMode |= (ROMCRC == 0xc00c4ea5) ? APU_HACKERY : 0; // Sam's Journey
 	NESMode |= (ROMCRC == 0x585f3500) ? ALT_MMC3 : 0; // Darkwing Duck (T-Chi)
 	NESMode |= (ROMCRC == 0x2d826113) ? ALT_MMC3 : 0; // cybercoaster
@@ -11311,7 +11313,7 @@ static INT32 gg_decode(char *gg_code, UINT16 &address, UINT8 &value, INT32 &comp
 static const INT32 cheat_MAX = 0x100;
 static INT32 cheats_active = 0;
 
-struct cheat_struct {
+struct nes_cheat_struct {
 	char code[0x10]; // gamegenie code
 	UINT16 address;
 	UINT8 value;
@@ -11320,7 +11322,7 @@ struct cheat_struct {
 	INT32 fbn_cheat_id;
 };
 
-static cheat_struct cheats[cheat_MAX];
+static nes_cheat_struct cheats[cheat_MAX];
 
 static void nes_add_cheat(char *code, int fbn_cheat_id) // 6/8 character game genie codes allowed
 { // lowercase GGenie code: access 0-7fff, uppercase: access 8000-ffff
@@ -11349,12 +11351,12 @@ static void nes_add_cheat(char *code, int fbn_cheat_id) // 6/8 character game ge
 
 static void nes_remove_cheat(char *code)
 {
-	cheat_struct cheat_temp[cheat_MAX];
+	nes_cheat_struct cheat_temp[cheat_MAX];
 	INT32 temp_num = 0;
 
 	for (INT32 i = 0; i < cheats_active; i++) {
 		if (strcmp(code, cheats[i].code) != 0) {
-			memcpy(&cheat_temp[temp_num], &cheats[i], sizeof(cheat_struct));
+			memcpy(&cheat_temp[temp_num], &cheats[i], sizeof(nes_cheat_struct));
 			temp_num++;
 		} else {
 			bprintf(0, _T("cheat %S disabled.\n"), cheats[i].code);
